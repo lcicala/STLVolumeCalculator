@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace STLVolumeCalculator
 {
@@ -14,13 +13,14 @@ namespace STLVolumeCalculator
 
         double _volume = double.NaN;
 
-        public double Volume { 
+        public double Volume
+        {
             get
             {
                 if (double.IsNaN(_volume))
                     _volume = CalculateVolume(this);
                 return _volume;
-            } 
+            }
         }
 
         static double SignedVolumeOfTriangle(Vector p1, Vector p2, Vector p3)
@@ -77,12 +77,6 @@ namespace STLVolumeCalculator
                         Zs[i] = double.Parse(v.Groups[3].Value);
                         i++;
                     }
-                    //for(i = 0; i < Xs.Length; i++)
-                    //{
-                    //    Xs[i] /= 10000;
-                    //    Ys[i] /= 10000;
-                    //    Zs[i] /= 10000;
-                    //}
                     Vector norm = new Vector(Xs[0], Ys[0], Zs[0]);
                     Vector P1 = new Vector(Xs[1], Ys[1], Zs[1]);
                     Vector P2 = new Vector(Xs[2], Ys[2], Zs[2]);
@@ -98,7 +92,7 @@ namespace STLVolumeCalculator
                 double[] Xs = new double[4];
                 double[] Ys = new double[4];
                 double[] Zs = new double[4];
-                for(int i = 0; i < numberOfTriangles; i++)
+                for (int i = 0; i < numberOfTriangles; i++)
                 {
                     for (int k = 0; k < 4; k++)
                     {
@@ -117,5 +111,6 @@ namespace STLVolumeCalculator
             }
             return mesh;
         }
+
     }
 }
