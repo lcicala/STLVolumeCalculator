@@ -86,27 +86,29 @@ namespace STLVolumeCalculator
             }
             else
             {
-                BinaryReader binaryReader = new BinaryReader(File.OpenRead(PathToSTL));
-                binaryReader.ReadBytes(80);
-                var numberOfTriangles = binaryReader.ReadInt32();
-                double[] Xs = new double[4];
-                double[] Ys = new double[4];
-                double[] Zs = new double[4];
-                for (int i = 0; i < numberOfTriangles; i++)
-                {
-                    for (int k = 0; k < 4; k++)
+                using (BinaryReader binaryReader = new BinaryReader(File.OpenRead(PathToSTL)))
+                { 
+                    binaryReader.ReadBytes(80);
+                    var numberOfTriangles = binaryReader.ReadInt32();
+                    double[] Xs = new double[4];
+                    double[] Ys = new double[4];
+                    double[] Zs = new double[4];
+                    for (int i = 0; i < numberOfTriangles; i++)
                     {
-                        Xs[k] = binaryReader.ReadSingle();
-                        Ys[k] = binaryReader.ReadSingle();
-                        Zs[k] = binaryReader.ReadSingle();
-                    }
-                    binaryReader.ReadUInt16();
+                        for (int k = 0; k < 4; k++)
+                        {
+                            Xs[k] = binaryReader.ReadSingle();
+                            Ys[k] = binaryReader.ReadSingle();
+                            Zs[k] = binaryReader.ReadSingle();
+                        }
+                        binaryReader.ReadUInt16();
 
-                    Vector norm = new Vector(Xs[0], Ys[0], Zs[0]);
-                    Vector P1 = new Vector(Xs[1], Ys[1], Zs[1]);
-                    Vector P2 = new Vector(Xs[2], Ys[2], Zs[2]);
-                    Vector P3 = new Vector(Xs[3], Ys[3], Zs[3]);
-                    mesh.Triangles.Add(new Triangle(P1, P2, P3, norm));
+                        Vector norm = new Vector(Xs[0], Ys[0], Zs[0]);
+                        Vector P1 = new Vector(Xs[1], Ys[1], Zs[1]);
+                        Vector P2 = new Vector(Xs[2], Ys[2], Zs[2]);
+                        Vector P3 = new Vector(Xs[3], Ys[3], Zs[3]);
+                        mesh.Triangles.Add(new Triangle(P1, P2, P3, norm));
+                    }
                 }
             }
             return mesh;
