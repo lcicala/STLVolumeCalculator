@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace STLVolumeCalculator
@@ -23,7 +24,7 @@ namespace STLVolumeCalculator
             }
         }
 
-        static double SignedVolumeOfTriangle(Vector p1, Vector p2, Vector p3)
+        static double SignedVolumeOfTriangle(Vector3 p1, Vector3 p2, Vector3 p3)
         {
             var v321 = p3.X * p2.Y * p1.Z;
             var v231 = p2.X * p3.Y * p1.Z;
@@ -39,6 +40,22 @@ namespace STLVolumeCalculator
             var vols = from t in mesh.Triangles
                        select SignedVolumeOfTriangle(t.P1, t.P2, t.P3);
             return Math.Abs(vols.Sum());
+        }
+
+        public string ExportSTLA()
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.AppendLine("solid ASCII");
+            foreach (var triangle in Triangles)
+            {
+                stringBuilder.AppendFormat("\tfacet normal {0} {1} {2}\n\t\touter loop\n\t\t\tvertex {3} {4} {5}\n\t\t\tvertex {6} {7} {8}\n\t\t\tvertex {9} {10} {11}\n\t\tendloop\n\tendfacet\n",
+                    triangle.Normal.X, triangle.Normal.Y, triangle.Normal.Z,
+                    triangle.P1.X, triangle.P1.Y, triangle.P1.Z,
+                    triangle.P2.X, triangle.P2.Y, triangle.P2.Z,
+                    triangle.P3.X, triangle.P3.Y, triangle.P3.Z);
+            }
+            stringBuilder.Append("endsolid");
+            return stringBuilder.ToString();
         }
 
         public static Mesh LoadFromSTL(string PathToSTL)
@@ -77,10 +94,10 @@ namespace STLVolumeCalculator
                         Zs[i] = double.Parse(v.Groups[3].Value);
                         i++;
                     }
-                    Vector norm = new Vector(Xs[0], Ys[0], Zs[0]);
-                    Vector P1 = new Vector(Xs[1], Ys[1], Zs[1]);
-                    Vector P2 = new Vector(Xs[2], Ys[2], Zs[2]);
-                    Vector P3 = new Vector(Xs[3], Ys[3], Zs[3]);
+                    Vector3 norm = new Vector3(Xs[0], Ys[0], Zs[0]);
+                    Vector3 P1 = new Vector3(Xs[1], Ys[1], Zs[1]);
+                    Vector3 P2 = new Vector3(Xs[2], Ys[2], Zs[2]);
+                    Vector3 P3 = new Vector3(Xs[3], Ys[3], Zs[3]);
                     mesh.Triangles.Add(new Triangle(P1, P2, P3, norm));
                 }
             }
@@ -103,10 +120,10 @@ namespace STLVolumeCalculator
                         }
                         binaryReader.ReadUInt16();
 
-                        Vector norm = new Vector(Xs[0], Ys[0], Zs[0]);
-                        Vector P1 = new Vector(Xs[1], Ys[1], Zs[1]);
-                        Vector P2 = new Vector(Xs[2], Ys[2], Zs[2]);
-                        Vector P3 = new Vector(Xs[3], Ys[3], Zs[3]);
+                        Vector3 norm = new Vector3(Xs[0], Ys[0], Zs[0]);
+                        Vector3 P1 = new Vector3(Xs[1], Ys[1], Zs[1]);
+                        Vector3 P2 = new Vector3(Xs[2], Ys[2], Zs[2]);
+                        Vector3 P3 = new Vector3(Xs[3], Ys[3], Zs[3]);
                         mesh.Triangles.Add(new Triangle(P1, P2, P3, norm));
                     }
                 }
